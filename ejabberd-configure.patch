@@ -1,0 +1,13 @@
+diff -up ejabberd-15.10/configure.ac.configure ejabberd-15.10/configure.ac
+--- ejabberd-15.10/configure.ac.configure	2015-10-28 17:13:12.000000000 +0200
++++ ejabberd-15.10/configure.ac	2015-11-11 16:45:37.400198301 +0200
+@@ -6,7 +6,8 @@ AC_INIT(ejabberd, 15.10, ejabberd@proces
+ REQUIRE_ERLANG_MIN="6.1 (Erlang/OTP 17.1)"
+ REQUIRE_ERLANG_MAX="9.0.0 (No Max)"
+ 
+-AC_CONFIG_MACRO_DIR([m4])
++m4_include([m4/ax_lib_sqlite3.m4])
++m4_include([m4/erlang-extra.m4])
+ 
+ # Checks for programs.
+ AC_PROG_MAKE_SET

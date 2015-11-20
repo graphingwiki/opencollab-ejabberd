@@ -1,0 +1,140 @@
+diff -up ejabberd-15.10/include/mod_muc_room.hrl.collab ejabberd-15.10/include/mod_muc_room.hrl
+--- ejabberd-15.10/include/mod_muc_room.hrl.collab	2015-10-28 16:53:12.000000000 +0200
++++ ejabberd-15.10/include/mod_muc_room.hrl	2015-11-11 16:45:37.406198313 +0200
+@@ -50,8 +50,8 @@
+     persistent                           = false :: boolean(),
+     moderated                            = true :: boolean(),
+     captcha_protected                    = false :: boolean(),
+-    members_by_default                   = true :: boolean(),
+-    members_only                         = false :: boolean(),
++    members_by_default                   = false :: boolean(),
++    members_only                         = true :: boolean(),
+     allow_user_invites                   = false :: boolean(),
+     password_protected                   = false :: boolean(),
+     password                             = <<"">> :: binary(),
+diff -up ejabberd-15.10/src/ejabberd_http.erl.collab ejabberd-15.10/src/ejabberd_http.erl
+--- ejabberd-15.10/src/ejabberd_http.erl.collab	2015-10-28 16:53:12.000000000 +0200
++++ ejabberd-15.10/src/ejabberd_http.erl	2015-11-11 16:45:37.407198315 +0200
+@@ -752,7 +752,13 @@ parse_auth(<<"Basic ", Auth64/binary>>) 
+             undefined;
+         Pos ->
+             {User, <<$:, Pass/binary>>} = erlang:split_binary(Auth, Pos-1),
+-            {User, Pass}
++            case str:tokens(User, <<"@">>) of
++                [Nick, Domain] ->
++                    NewUser = <<Nick/binary, "%", Domain/binary>>;
++                _ ->
++                    NewUser = User
++            end,
++            {<<NewUser/binary, "@", (?MYNAME)/binary>>, Pass}
+     end;
+ parse_auth(<<"Bearer ", SToken/binary>>) ->
+     Token = str:strip(SToken),
+diff -up ejabberd-15.10/src/extauth.erl.collab ejabberd-15.10/src/extauth.erl
+--- ejabberd-15.10/src/extauth.erl.collab	2015-10-28 16:53:12.000000000 +0200
++++ ejabberd-15.10/src/extauth.erl	2015-11-11 16:45:37.407198315 +0200
+@@ -31,7 +31,8 @@
+ 
+ -export([start/2, stop/1, init/2, check_password/3,
+ 	 set_password/3, try_register/3, remove_user/2,
+-	 remove_user/3, is_user_exists/2, opt_type/1]).
++	 remove_user/3, is_user_exists/2, opt_type/1,
++	 get_affiliation/4]).
+ 
+ -include("ejabberd.hrl").
+ -include("logger.hrl").
+@@ -94,6 +95,9 @@ remove_user(User, Server, Password) ->
+     call_port(Server,
+ 	      [<<"removeuser3">>, User, Server, Password]).
+ 
++get_affiliation(User, Server, Room, RoomServer) ->
++    call_port(?MYNAME, ["getaff", User, Server, Room, RoomServer]).
++
+ call_port(Server, Msg) ->
+     LServer = jlib:nameprep(Server),
+     ProcessName = get_process_name(LServer,
+@@ -158,7 +162,8 @@ flush_buffer_and_forward_messages(Pid) -
+ encode(L) -> str:join(L, <<":">>).
+ 
+ decode([0, 0]) -> false;
+-decode([0, 1]) -> true.
++decode([0, 1]) -> true;
++decode(String) -> list_to_atom(String).
+ 
+ opt_type(extauth_instances) ->
+     fun (V) when is_integer(V), V > 0 -> V end;
+diff -up ejabberd-15.10/src/mod_muc_room.erl.collab ejabberd-15.10/src/mod_muc_room.erl
+--- ejabberd-15.10/src/mod_muc_room.erl.collab	2015-10-28 16:53:12.000000000 +0200
++++ ejabberd-15.10/src/mod_muc_room.erl	2015-11-11 16:45:37.409198319 +0200
+@@ -1346,43 +1346,15 @@ set_affiliation(JID, Affiliation, StateD
+     StateData#state{affiliations = Affiliations}.
+ 
+ get_affiliation(JID, StateData) ->
+-    {_AccessRoute, _AccessCreate, AccessAdmin,
+-     _AccessPersistent} =
+-	StateData#state.access,
+-    Res = case acl:match_rule(StateData#state.server_host,
+-			      AccessAdmin, JID)
+-	      of
+-	    allow -> owner;
+-	    _ ->
+-		LJID = jlib:jid_tolower(JID),
+-		case (?DICT):find(LJID, StateData#state.affiliations) of
+-		  {ok, Affiliation} -> Affiliation;
+-		  _ ->
+-		      LJID1 = jlib:jid_remove_resource(LJID),
+-		      case (?DICT):find(LJID1, StateData#state.affiliations)
+-			  of
+-			{ok, Affiliation} -> Affiliation;
+-			_ ->
+-			    LJID2 = setelement(1, LJID, <<"">>),
+-			    case (?DICT):find(LJID2,
+-					      StateData#state.affiliations)
+-				of
+-			      {ok, Affiliation} -> Affiliation;
+-			      _ ->
+-				  LJID3 = jlib:jid_remove_resource(LJID2),
+-				  case (?DICT):find(LJID3,
+-						    StateData#state.affiliations)
+-				      of
+-				    {ok, Affiliation} -> Affiliation;
+-				    _ -> none
+-				  end
+-			    end
+-		      end
+-		end
+-	  end,
+-    case Res of
+-      {A, _Reason} -> A;
+-      _ -> Res
++    User = JID#jid.user,
++    Server = JID#jid.server,
++    Room = StateData#state.room,
++    RoomServer = StateData#state.host,
++    case extauth:get_affiliation(User, Server, Room, RoomServer) of
++        false ->
++            none;
++        Affiliation -> 
++            Affiliation
+     end.
+ 
+ get_service_affiliation(JID, StateData) ->
+@@ -2133,7 +2105,7 @@ send_new_presence1(NJID, Reason, StateDa
+ 	   last_presence = Presence}} =
+ 	(?DICT):find(jlib:jid_tolower(LJID),
+ 		     StateData#state.users),
+-    Affiliation = get_affiliation(LJID, StateData),
++    Affiliation = member,
+     SAffiliation = affiliation_to_list(Affiliation),
+     SRole = role_to_list(Role),
+     lists:foreach(fun ({_LJID, Info}) ->
+@@ -2228,8 +2200,7 @@ send_existing_presences1(ToJID, StateDat
+ 			  case RealToJID of
+ 			    FromJID -> ok;
+ 			    _ ->
+-				FromAffiliation = get_affiliation(LJID,
+-								  StateData),
++				FromAffiliation = member,
+ 				ItemAttrs = case Role == moderator orelse
+ 						   (StateData#state.config)#config.anonymous
+ 						     == false
