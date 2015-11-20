@@ -4,13 +4,13 @@
 
 This is not a vanilla ejabberd XMPP server (https://www.ejabberd.im/)!
 
-This is a specific fork which modifies MUC and authentication bits to make ejabberd to integrate to the OpenCollab Wiki envinronment.
+This is a specific fork which modifies MUC and authentication bits to make ejabberd integrate with the OpenCollab Wiki envinronment.
 
-You should not use this unless you run full OpenCollan envinronment, for other uses please use vanilla upstream ejabberd.
+You should not use this unless you run full OpenCollab envinronment, for other uses please use vanilla upstream ejabberd.
 
 ## Automatic builds
 
-Our releases (RPMs and other packages) are automatically build from the release tags and available from https://github.com/abusesa/opencollab-ejabberd/releases.
+Our releases (RPMs and other packages) are automatically built from the release tags and available from https://github.com/abusesa/opencollab-ejabberd/releases.
 
 ## Running the Dockerized build manually
 
