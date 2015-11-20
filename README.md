@@ -4,9 +4,9 @@
 
 This is not a vanilla ejabberd XMPP server (https://www.ejabberd.im/)!
 
-This is a specific fork which modifies MUC and authentication bits to make ejabberd integrate with the OpenCollab Wiki envinronment.
+This is a specific fork which modifies MUC and authentication bits to make ejabberd integrate with the OpenCollab Wiki environment.
 
-You should not use this unless you run full OpenCollab envinronment, for other uses please use vanilla upstream ejabberd.
+You should not use this unless you run full OpenCollab environment, for other uses please use vanilla upstream ejabberd.
 
 ## Automatic builds
 
