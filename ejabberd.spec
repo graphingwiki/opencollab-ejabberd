@@ -184,5 +184,6 @@ fi
 %attr(750,ejabberd,ejabberd) %dir /var/log/ejabberd
 
 %changelog
+* Wed Nov 20 2015 Marko Laakso <fenris@iki.fi> - 15.10-2 [CI building releases first time ever]
 * Wed Nov 11 2015 Ossi Salmi <osalmi@iki.fi> - 15.10-1
 - Ver. 15.10
