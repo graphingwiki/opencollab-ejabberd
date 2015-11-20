@@ -1,5 +1,17 @@
 [![Circle CI](https://circleci.com/gh/abusesa/opencollab-ejabberd.svg?style=shield)](https://circleci.com/gh/abusesa/opencollab-ejabberd)
 
+# OpenCollab ejabberd
+
+This is not a vanilla ejabberd XMPP server (https://www.ejabberd.im/)!
+
+This is a specific fork which modifies MUC and authentication bits to make ejabberd to integrate to the OpenCollab Wiki envinronment.
+
+You should not use this unless you run full OpenCollan envinronment, for other uses please use vanilla upstream ejabberd.
+
+## Automatic builds
+
+Our releases (RPMs and other packages) are automatically build from the release tags and available from https://github.com/abusesa/opencollab-ejabberd/releases.
+
 ## Running the Dockerized build manually
 
 ### (Required for OS X) Initialize Docker Machine
