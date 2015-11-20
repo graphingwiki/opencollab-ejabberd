@@ -5,7 +5,7 @@
 
 Name:           ejabberd
 Version:        15.10
-Release:        1%{?dist}.collab
+Release:        2%{?dist}.collab
 Summary:        A distributed, fault-tolerant Jabber/XMPP server
 
 Group:          Applications/Internet
