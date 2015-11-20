@@ -1,0 +1,22 @@
+machine:
+  services:
+    - docker
+  python:
+    version: 2.7.10
+
+dependencies:
+  pre:
+    - pip install https://github.com/abusesa/github-release/archive/master.tar.gz
+  override:
+    - docker build --pull -t build-image .
+
+test:
+  override:
+    - docker run -ti --name build-container build-image
+
+deployment:
+  release:
+    tag: /\d(\.\d)*/
+    commands:
+      - docker cp build-container:/output .
+      - github-release $GITHUB_API_TOKEN $CIRCLE_PROJECT_USERNAME $CIRCLE_PROJECT_REPONAME $CIRCLE_TAG output/*
