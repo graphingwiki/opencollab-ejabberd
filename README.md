@@ -1,3 +1,5 @@
+[![Circle CI](https://circleci.com/gh/abusesa/opencollab-ejabberd.svg?style=shield)](https://circleci.com/gh/abusesa/opencollab-ejabberd)
+
 ## Running the Dockerized build manually
 
 ### (Required for OS X) Initialize Docker Machine
