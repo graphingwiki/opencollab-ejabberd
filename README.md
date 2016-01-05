@@ -1,5 +1,3 @@
-[![Circle CI](https://circleci.com/gh/abusesa/opencollab-ejabberd.svg?style=shield)](https://circleci.com/gh/abusesa/opencollab-ejabberd)
-
 # OpenCollab ejabberd
 
 This is not a vanilla ejabberd XMPP server (https://www.ejabberd.im/)!
@@ -10,7 +8,7 @@ You should not use this unless you run full OpenCollab environment, for other us
 
 ## Automatic builds
 
-Our releases (RPMs and other packages) are automatically built from the release tags and available from https://github.com/abusesa/opencollab-ejabberd/releases.
+Our releases (RPMs and other packages) are automatically built from the release tags and available from https://github.com/graphingwiki/opencollab-ejabberd/releases.
 
 ## Running the Dockerized build manually
 
