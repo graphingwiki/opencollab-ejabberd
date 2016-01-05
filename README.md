@@ -1,4 +1,4 @@
-# OpenCollab ejabberd
+# OpenCollab ejabberd [![Circle CI](https://circleci.com/gh/graphingwiki/opencollab-ejabberd.svg?style=shield)](https://circleci.com/gh/graphingwiki/opencollab-ejabberd)
 
 This is not a vanilla ejabberd XMPP server (https://www.ejabberd.im/)!
 
