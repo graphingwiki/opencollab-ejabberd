@@ -4,8 +4,8 @@
 %{expand: %(DRV_VER=`rpm -q erlang-erts --provides | grep --color=no erl_drv_version` ; if [ "$DRV_VER" != "" ]; then echo %%global __erlang_drv_version $DRV_VER ; fi)}
 
 Name:           ejabberd
-Version:        15.10
-Release:        2%{?dist}.collab
+Version:        16.01
+Release:        1%{?dist}.collab
 Summary:        A distributed, fault-tolerant Jabber/XMPP server
 
 Group:          Applications/Internet
@@ -177,13 +177,17 @@ fi
 %{_libdir}/%{name}/*/ebin
 %{_libdir}/%{name}/*/include
 %{_libdir}/%{name}/*/priv
-%attr(4750,root,ejabberd) %{_libdir}/%{name}/p1_pam/priv/bin/epam
+%attr(4750,root,ejabberd) %{_libdir}/%{name}/p1_pam-1.0.0/priv/bin/epam
 
 %attr(750,ejabberd,ejabberd) %dir /var/lib/ejabberd
 %attr(750,ejabberd,ejabberd) %dir /var/lock/ejabberdctl
 %attr(750,ejabberd,ejabberd) %dir /var/log/ejabberd
 
 %changelog
+* Fri Jan 15 2016 Ossi Salmi <osalmi@iki.fi> - 16.01-1
+- Ver. 16.01
+
 * Wed Nov 20 2015 Marko Laakso <fenris@iki.fi> - 15.10-2 [CI building releases first time ever]
+
 * Wed Nov 11 2015 Ossi Salmi <osalmi@iki.fi> - 15.10-1
 - Ver. 15.10

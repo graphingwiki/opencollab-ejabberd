@@ -1,6 +1,6 @@
-diff -up ejabberd-15.10/Makefile.in.makefile ejabberd-15.10/Makefile.in
---- ejabberd-15.10/Makefile.in.makefile	2015-10-28 16:53:12.000000000 +0200
-+++ ejabberd-15.10/Makefile.in	2015-11-11 17:28:06.126369485 +0200
+diff -up ejabberd-16.01/Makefile.in.makefile ejabberd-16.01/Makefile.in
+--- ejabberd-16.01/Makefile.in.makefile	2016-01-12 13:07:58.000000000 +0200
++++ ejabberd-16.01/Makefile.in	2016-01-15 15:50:25.242304452 +0200
 @@ -18,13 +18,13 @@ BINDIR = $(DESTDIR)@bindir@
  SBINDIR = $(DESTDIR)@sbindir@
  
@@ -18,16 +18,23 @@ diff -up ejabberd-15.10/Makefile.in.makefile ejabberd-15.10/Makefile.in
  datarootdir = @datarootdir@
  DOCDIR = $(DESTDIR)@docdir@
  
-@@ -133,7 +133,7 @@ $(call TO_DEST,$(MAIN_DIRS) $(DEPS_DIRS)
+@@ -153,13 +153,13 @@ $(sort $(call TO_DEST,$(MAIN_DIRS) $(DEP
  	$(INSTALL) -d $@
  
- $(call TO_DEST,deps/p1_pam/priv/bin/epam): $(LIBDIR)/%: deps/% $(call TO_DEST,deps/p1_pam/priv/bin/)
+ $(call TO_DEST,deps/p1_pam/priv/bin/epam): $(LIBDIR)/%: deps/p1_pam/priv/bin/epam $(call TO_DEST,deps/p1_pam/priv/bin/)
 -	$(INSTALL) -m 750 $(O_USER) $< $@
 +	$(INSTALL) -m 755 $(O_USER) $< $@
  
- copy-files: $(call TO_DEST,$(DEPS_FILES) $(MAIN_FILES))
+ $(call TO_DEST,priv/sql/lite.sql): sql/lite.sql $(call TO_DEST,priv/sql)
+ 	$(INSTALL) -m 644 $< $@
  
-@@ -160,12 +160,12 @@ install: all copy-files
+ $(call TO_DEST,priv/bin/captcha.sh): tools/captcha.sh $(call TO_DEST,priv/bin)
+-	$(INSTALL) -m 750 $(O_USER) $< $@
++	$(INSTALL) -m 755 $(O_USER) $< $@
+ 
+ copy-files-sub2: $(call TO_DEST,$(DEPS_FILES) $(MAIN_FILES) priv/bin/captcha.sh priv/sql/lite.sql)
+ 
+@@ -193,12 +193,12 @@ install: all copy-files
  	#
  	# Administration script
  	[ -d $(SBINDIR) ] || $(INSTALL) -d -m 755 $(SBINDIR)
@@ -44,16 +51,3 @@ diff -up ejabberd-15.10/Makefile.in.makefile ejabberd-15.10/Makefile.in
  	#
  	# Init script
  	$(SED) -e "s*@ctlscriptpath@*$(SBINDIR)*" \
-@@ -179,9 +179,9 @@ install: all copy-files
- 	#
- 	# Binary C programs
- 	$(INSTALL) -d $(PBINDIR)
--	$(INSTALL) -m 750 $(O_USER) tools/captcha.sh $(PBINDIR)
--	$(INSTALL) -m 750 $(O_USER) tools/joincluster $(PBINDIR)
--	$(INSTALL) -m 750 $(O_USER) tools/leavecluster $(PBINDIR)
-+	$(INSTALL) -m 755 $(O_USER) tools/captcha.sh $(PBINDIR)
-+	$(INSTALL) -m 755 $(O_USER) tools/joincluster $(PBINDIR)
-+	$(INSTALL) -m 755 $(O_USER) tools/leavecluster $(PBINDIR)
- 	#
- 	# Copy lite.sql
- 	[ -d deps/sqlite3 ] && $(INSTALL) -d $(SQLDIR) || true
