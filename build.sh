@@ -1,7 +1,10 @@
-cd ~/rpmbuild/SOURCES
-spectool -g ejabberd.spec
-mv ejabberd.spec ~/rpmbuild/SPECS
-cd ~/rpmbuild/SPECS
-rpmbuild -ba ejabberd.spec
-cp ~/rpmbuild/RPMS/*/*.rpm /output
-cp ~/rpmbuild/SRPMS/*.rpm /output
+cd ./rpmbuild/SPECS
+runuser build -c "spectool -C ../SOURCES -g ejabberd.spec"
+runuser build -c "rpmbuild -bs ejabberd.spec"
+
+cd ../SRPMS
+yum-builddep -y *.src.rpm
+runuser build -c "rpmbuild --rebuild *.src.rpm"
+
+test -d /output && \
+    cp *.src.rpm ../RPMS/*/*.rpm /output
