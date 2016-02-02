@@ -1,8 +1,5 @@
 %global _hardened_build 1
 
-%{expand: %(NIF_VER=`rpm -q erlang-erts --provides | grep --color=no erl_nif_version` ; if [ "$NIF_VER" != "" ]; then echo %%global __erlang_nif_version $NIF_VER ; fi)}
-%{expand: %(DRV_VER=`rpm -q erlang-erts --provides | grep --color=no erl_drv_version` ; if [ "$DRV_VER" != "" ]; then echo %%global __erlang_drv_version $DRV_VER ; fi)}
-
 Name:           ejabberd
 Version:        16.01
 Release:        1%{?dist}.collab
@@ -47,9 +44,6 @@ Provides:       group(%{name})
 Requires:       erlang
 Requires:       util-linux
 Requires:       usermode
-%{?__erlang_drv_version:Requires: %{__erlang_drv_version}}
-%{?__erlang_nif_version:Requires: %{__erlang_nif_version}}
-
 %description
 ejabberd is a Free and Open Source distributed fault-tolerant
 Jabber/XMPP server. It is mostly written in Erlang, and runs on many
@@ -67,7 +61,7 @@ Windows NT/2000/XP).
 %build
 autoreconf -ivf
 
-%configure --enable-nif --enable-odbc --enable-mysql --enable-pgsql --enable-pam --enable-zlib --enable-iconv --enable-debug --enable-lager
+%configure --enable-odbc --enable-mysql --enable-pgsql --enable-pam --enable-zlib --enable-iconv --enable-debug --enable-lager
 make
 
 %install
