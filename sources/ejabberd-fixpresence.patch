@@ -1,0 +1,31 @@
+diff -up ejabberd-16.01/src/mod_muc_room.erl.fixpresence ejabberd-16.01/src/mod_muc_room.erl
+--- ejabberd-16.01/src/mod_muc_room.erl.fixpresence	2016-02-02 13:28:27.445840303 +0000
++++ ejabberd-16.01/src/mod_muc_room.erl	2016-02-02 13:37:03.236378836 +0000
+@@ -2189,14 +2189,20 @@ send_new_presence1(NJID, Reason, StateDa
+ 					   | Status2];
+ 				      false -> Status2
+ 				    end,
+-			  Status4 = case (StateData#state.config)#config.logging of
++			  Status4 = case (StateData#state.config)#config.logging == true
++                      andalso NJID == Info#user.jid of
+ 				      true ->
+-					  [#xmlel{name = <<"status">>,
+-						  attrs =
+-						      [{<<"code">>, <<"170">>}],
+-						  children = []}
+-					   | Status3];
+-				      false -> Status3
++                          case (?DICT):find(jid:tolower(LJID),
++                                            OldStateData#state.users) of
++                              {ok, _} -> Status3;
++                              _ ->
++                                  [#xmlel{name = <<"status">>,
++                                          attrs =
++                                              [{<<"code">>, <<"170">>}],
++                                          children = []}
++                                   | Status3]
++                          end;
++                      false -> Status3
+ 				    end,
+ 			  Packet = xml:append_subtags(Presence,
+ 						      [#xmlel{name = <<"x">>,

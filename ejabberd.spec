@@ -2,7 +2,7 @@
 
 Name:           ejabberd
 Version:        16.01
-Release:        1%{?dist}.collab
+Release:        2%{?dist}.collab
 Summary:        A distributed, fault-tolerant Jabber/XMPP server
 
 Group:          Applications/Internet
@@ -19,6 +19,7 @@ Patch1:         ejabberd-configure.patch
 Patch2:         ejabberd-makefile.patch
 Patch3:         ejabberd-ejabberdctl.patch
 Patch4:         ejabberd-collab.patch
+Patch5:         ejabberd-fixpresence.patch
 
 BuildRequires:  expat-devel
 BuildRequires:  openssl-devel >= 0.9.8
@@ -57,6 +58,7 @@ Windows NT/2000/XP).
 %patch2 -p1 -b .makefile
 %patch3 -p1 -b .ejabberdctl
 %patch4 -p1 -b .collab
+%patch5 -p1 -b .fixpresence
 
 %build
 autoreconf -ivf
@@ -178,6 +180,9 @@ fi
 %attr(750,ejabberd,ejabberd) %dir /var/log/ejabberd
 
 %changelog
+* Tue Feb 02 2016 Ossi Salmi <osalmi@iki.fi> - 16.01-2
+- Apply upstream fixes for https://github.com/processone/ejabberd/issues/936
+
 * Fri Jan 15 2016 Ossi Salmi <osalmi@iki.fi> - 16.01-1
 - Ver. 16.01
 
