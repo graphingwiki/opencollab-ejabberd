@@ -1,6 +1,6 @@
-diff -up ejabberd-16.01/ejabberdctl.template.ejabberdctl ejabberd-16.01/ejabberdctl.template
---- ejabberd-16.01/ejabberdctl.template.ejabberdctl	2016-01-12 13:07:58.000000000 +0200
-+++ ejabberd-16.01/ejabberdctl.template	2016-01-15 15:50:25.244304456 +0200
+diff -up ejabberd-16.02/ejabberdctl.template.ejabberdctl ejabberd-16.02/ejabberdctl.template
+--- ejabberd-16.02/ejabberdctl.template.ejabberdctl	2016-02-29 13:35:45.000000000 +0000
++++ ejabberd-16.02/ejabberdctl.template	2016-03-02 10:57:20.982282814 +0000
 @@ -7,15 +7,18 @@ ERL_MAX_PORTS=32000
  ERL_PROCESSES=250000
  ERL_MAX_ETS_TABLES=1400

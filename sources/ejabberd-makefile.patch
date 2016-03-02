@@ -1,6 +1,6 @@
-diff -up ejabberd-16.01/Makefile.in.makefile ejabberd-16.01/Makefile.in
---- ejabberd-16.01/Makefile.in.makefile	2016-01-12 13:07:58.000000000 +0200
-+++ ejabberd-16.01/Makefile.in	2016-01-15 15:50:25.242304452 +0200
+diff -up ejabberd-16.02/Makefile.in.makefile ejabberd-16.02/Makefile.in
+--- ejabberd-16.02/Makefile.in.makefile	2016-02-29 13:35:45.000000000 +0000
++++ ejabberd-16.02/Makefile.in	2016-03-02 10:57:20.972281470 +0000
 @@ -18,13 +18,13 @@ BINDIR = $(DESTDIR)@bindir@
  SBINDIR = $(DESTDIR)@sbindir@
  
