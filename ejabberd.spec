@@ -15,10 +15,9 @@ Source3:        ejabberd.sysconfig
 Source4:        ejabberdctl.pam
 Source5:        ejabberd.pam
 
-Patch1:         ejabberd-configure.patch
-Patch2:         ejabberd-makefile.patch
-Patch3:         ejabberd-ejabberdctl.patch
-Patch4:         ejabberd-collab.patch
+Patch1:         ejabberd-makefile.patch
+Patch2:         ejabberd-ejabberdctl.patch
+Patch3:         ejabberd-collab.patch
 
 BuildRequires:  expat-devel
 BuildRequires:  openssl-devel >= 0.9.8
@@ -53,15 +52,14 @@ Windows NT/2000/XP).
 %prep
 %setup -q
 
-%patch1 -p1 -b .configure
-%patch2 -p1 -b .makefile
-%patch3 -p1 -b .ejabberdctl
-%patch4 -p1 -b .collab
+%patch1 -p1 -b .makefile
+%patch2 -p1 -b .ejabberdctl
+%patch3 -p1 -b .collab
 
 %build
 autoreconf -ivf
 
-%configure --enable-odbc --enable-mysql --enable-pgsql --enable-pam --enable-zlib --enable-iconv --enable-debug --enable-lager
+%configure --libdir=%{_libdir}/%{name} --enable-odbc --enable-mysql --enable-pgsql --enable-pam --enable-zlib --enable-iconv --enable-debug
 make
 
 %install

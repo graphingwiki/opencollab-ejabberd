@@ -1,6 +1,6 @@
 diff -up ejabberd-16.02/include/mod_muc_room.hrl.collab ejabberd-16.02/include/mod_muc_room.hrl
 --- ejabberd-16.02/include/mod_muc_room.hrl.collab	2016-02-29 13:35:45.000000000 +0000
-+++ ejabberd-16.02/include/mod_muc_room.hrl	2016-03-02 10:57:20.982282814 +0000
++++ ejabberd-16.02/include/mod_muc_room.hrl	2016-03-02 12:28:43.260644363 +0000
 @@ -50,8 +50,8 @@
      persistent                           = false :: boolean(),
      moderated                            = true :: boolean(),
@@ -14,7 +14,7 @@ diff -up ejabberd-16.02/include/mod_muc_room.hrl.collab ejabberd-16.02/include/m
      password                             = <<"">> :: binary(),
 diff -up ejabberd-16.02/src/ejabberd_http.erl.collab ejabberd-16.02/src/ejabberd_http.erl
 --- ejabberd-16.02/src/ejabberd_http.erl.collab	2016-02-29 13:35:45.000000000 +0000
-+++ ejabberd-16.02/src/ejabberd_http.erl	2016-03-02 10:57:20.982282814 +0000
++++ ejabberd-16.02/src/ejabberd_http.erl	2016-03-02 12:28:43.260644363 +0000
 @@ -762,7 +762,13 @@ parse_auth(<<"Basic ", Auth64/binary>>) 
              undefined;
          Pos ->
@@ -32,7 +32,7 @@ diff -up ejabberd-16.02/src/ejabberd_http.erl.collab ejabberd-16.02/src/ejabberd
      Token = str:strip(SToken),
 diff -up ejabberd-16.02/src/extauth.erl.collab ejabberd-16.02/src/extauth.erl
 --- ejabberd-16.02/src/extauth.erl.collab	2016-02-29 13:35:45.000000000 +0000
-+++ ejabberd-16.02/src/extauth.erl	2016-03-02 10:57:20.982282814 +0000
++++ ejabberd-16.02/src/extauth.erl	2016-03-02 12:28:43.260644363 +0000
 @@ -31,7 +31,8 @@
  
  -export([start/2, stop/1, init/2, check_password/3,
@@ -65,7 +65,7 @@ diff -up ejabberd-16.02/src/extauth.erl.collab ejabberd-16.02/src/extauth.erl
      fun (V) when is_integer(V), V > 0 -> V end;
 diff -up ejabberd-16.02/src/mod_muc_room.erl.collab ejabberd-16.02/src/mod_muc_room.erl
 --- ejabberd-16.02/src/mod_muc_room.erl.collab	2016-02-29 13:35:45.000000000 +0000
-+++ ejabberd-16.02/src/mod_muc_room.erl	2016-03-02 10:57:20.992284159 +0000
++++ ejabberd-16.02/src/mod_muc_room.erl	2016-03-02 12:28:43.260644363 +0000
 @@ -1350,43 +1350,15 @@ set_affiliation(JID, Affiliation, StateD
      StateData#state{affiliations = Affiliations}.
  
