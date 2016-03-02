@@ -166,6 +166,7 @@ fi
 %{_sbindir}/ejabberdctl
 
 %dir %{_libdir}/%{name}
+%dir %{_libdir}/%{name}/*
 %{_libdir}/%{name}/*/ebin
 %{_libdir}/%{name}/*/include
 %{_libdir}/%{name}/*/priv
