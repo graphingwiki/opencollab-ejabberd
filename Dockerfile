@@ -1,9 +1,16 @@
 FROM centos:centos6
 
-RUN yum -y update
-RUN yum -y install gcc gcc-c++ rpmdevtools tar yum-utils
-RUN yum -y install epel-release
-RUN yum -y install https://packages.erlang-solutions.com/erlang-solutions-1.0-1.noarch.rpm
+RUN yum -y install epel-release && \
+    yum -y install wget https://packages.erlang-solutions.com/erlang-solutions-1.0-1.noarch.rpm && \
+    yum -y update && \
+    yum -y install \
+        gcc \
+        gcc-c++ \
+        rpmdevtools \
+        tar \
+        yum-utils \
+    && \
+    yum clean all
 
 RUN useradd -m -s /bin/bash build
 
