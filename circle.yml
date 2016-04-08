@@ -11,13 +11,12 @@ dependencies:
     - docker build --pull -t build-image .
 
 test:
-  pre:
-    - mkdir output
   override:
-    - docker run -ti -v `pwd`/output:/output --name build-container build-image
+    - docker run -ti --name build-container build-image
+    - docker cp build-container:/output/. $CIRCLE_ARTIFACTS
 
 deployment:
   release:
     tag: /\d+(\.\d+)*(\-\d+)*/
     commands:
-      - github-release "${GITHUB_API_TOKEN}" "${CIRCLE_PROJECT_USERNAME}" "${CIRCLE_PROJECT_REPONAME}" "${CIRCLE_TAG}" output/*
+      - github-release "${GITHUB_API_TOKEN}" "${CIRCLE_PROJECT_USERNAME}" "${CIRCLE_PROJECT_REPONAME}" "${CIRCLE_TAG}" $CIRCLE_ARTIFACTS/*
