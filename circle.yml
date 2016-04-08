@@ -11,10 +11,9 @@ dependencies:
     - docker build --pull -t build-image .
 
 test:
-  pre:
-    - mkdir output
   override:
-    - docker run -ti -v `pwd`/output:/output --name build-container build-image
+    - docker run -ti --name build-container build-image
+    - docker cp build-container:/output .
 
 deployment:
   release:
