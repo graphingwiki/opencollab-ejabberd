@@ -21,6 +21,4 @@ COPY sources rpmbuild/SOURCES/
 COPY build.sh ./
 RUN chown -R build:build .
 
-VOLUME /output
-
 CMD sh build.sh
