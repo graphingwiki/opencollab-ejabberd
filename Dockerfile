@@ -1,8 +1,7 @@
 FROM centos:centos6
 
-RUN yum -y install epel-release && \
-    yum -y install wget https://packages.erlang-solutions.com/erlang-solutions-1.0-1.noarch.rpm && \
-    yum -y update --exclude=filesystem && \
+RUN yum -y update --exclude=filesystem && \
+    yum -y install epel-release && \
     yum -y install \
         gcc \
         gcc-c++ \
@@ -11,6 +10,10 @@ RUN yum -y install epel-release && \
         yum-utils \
     && \
     yum clean all
+
+COPY erlang_solutions.asc /etc/pki/rpm-gpg/
+COPY erlang_solutions.repo /etc/yum.repos.d/
+RUN rpm --import /etc/pki/rpm-gpg/erlang_solutions.asc
 
 RUN useradd -m -s /bin/bash build
 
