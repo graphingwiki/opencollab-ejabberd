@@ -6,5 +6,4 @@ cd ../SRPMS
 yum-builddep -y *.src.rpm
 runuser build -c "rpmbuild --rebuild *.src.rpm"
 
-test -d /output && \
-    cp *.src.rpm ../RPMS/*/*.rpm /output
+mkdir /output && cp *.src.rpm ../RPMS/*/*.rpm /output
