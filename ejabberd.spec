@@ -20,7 +20,7 @@ Patch2:         ejabberd-ejabberdctl.patch
 Patch3:         ejabberd-collab.patch
 
 BuildRequires:  expat-devel
-BuildRequires:  openssl-devel >= 0.9.8
+BuildRequires:  openssl-devel
 BuildRequires:  pam-devel
 BuildRequires:  libyaml-devel
 BuildRequires:  erlang-compiler
