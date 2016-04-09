@@ -23,7 +23,11 @@ BuildRequires:  expat-devel
 BuildRequires:  openssl-devel >= 0.9.8
 BuildRequires:  pam-devel
 BuildRequires:  libyaml-devel
-BuildRequires:  erlang
+BuildRequires:  erlang-compiler
+BuildRequires:  erlang-edoc
+BuildRequires:  erlang-erl_interface
+BuildRequires:  erlang-eunit
+BuildRequires:  erlang-parsetools
 BuildRequires:  git
 BuildRequires:  autoconf
 BuildRequires:  automake
