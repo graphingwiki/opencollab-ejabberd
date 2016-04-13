@@ -1,5 +1,6 @@
+#!/bin/sh
+
 cd ./rpmbuild/SPECS
-runuser build -c "spectool -C ../SOURCES -g ejabberd.spec"
 runuser build -c "rpmbuild -bs ejabberd.spec"
 
 cd ../SRPMS

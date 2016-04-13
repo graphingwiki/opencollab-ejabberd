@@ -29,7 +29,7 @@ Upon completion the command will instruct you in setting up your environment.
 Create a Docker image ```build-image``` from which a container can be launched. The blueprints can be found from the file ```Dockerfile```.
 
 ```
-$ docker build -t build-image .
+$ docker build -t build-image --rm .
 ```
 
 This may take a moment or two.
