@@ -10,4 +10,4 @@ CONFIG_FILE=/etc/ejabberd/ejabberd.yml
 ## open files as it has active connections, so if you have a few
 ## hundred or more users you will want to set this.
 #
-ULIMIT_MAX_FILES=1024
+ULIMIT_MAX_FILES=4096
