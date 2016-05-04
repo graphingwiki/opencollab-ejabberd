@@ -1,6 +1,6 @@
-diff -up ejabberd-16.02/Makefile.in.makefile ejabberd-16.02/Makefile.in
---- ejabberd-16.02/Makefile.in.makefile	2016-02-29 13:35:45.000000000 +0000
-+++ ejabberd-16.02/Makefile.in	2016-03-02 12:28:43.250644017 +0000
+diff -up ejabberd-16.04/Makefile.in.makefile ejabberd-16.04/Makefile.in
+--- ejabberd-16.04/Makefile.in.makefile	2016-04-28 13:57:55.000000000 +0000
++++ ejabberd-16.04/Makefile.in	2016-05-04 07:31:25.079352975 +0000
 @@ -24,7 +24,7 @@ LIBDIR =  $(DESTDIR)@libdir@
  EJABBERDDIR = $(DESTDIR)@libdir@/ejabberd
  

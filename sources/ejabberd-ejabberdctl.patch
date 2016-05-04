@@ -1,6 +1,6 @@
-diff -up ejabberd-16.02/ejabberdctl.template.ejabberdctl ejabberd-16.02/ejabberdctl.template
---- ejabberd-16.02/ejabberdctl.template.ejabberdctl	2016-02-29 13:35:45.000000000 +0000
-+++ ejabberd-16.02/ejabberdctl.template	2016-03-02 12:39:49.385689090 +0000
+diff -up ejabberd-16.04/ejabberdctl.template.ejabberdctl ejabberd-16.04/ejabberdctl.template
+--- ejabberd-16.04/ejabberdctl.template.ejabberdctl	2016-04-28 13:57:55.000000000 +0000
++++ ejabberd-16.04/ejabberdctl.template	2016-05-04 07:31:25.079352975 +0000
 @@ -7,16 +7,19 @@ ERL_MAX_PORTS=32000
  ERL_PROCESSES=250000
  ERL_MAX_ETS_TABLES=1400
@@ -32,20 +32,12 @@ diff -up ejabberd-16.02/ejabberdctl.template.ejabberdctl ejabberd-16.02/ejabberd
          fi
      done
      if [ `id -g` -eq `id -g $INSTALLUSER` ] ; then
-@@ -85,17 +88,6 @@ if [ "$ERLANG_NODE_ARG" != "" ] ; then
+@@ -84,9 +87,6 @@ fi
+ if [ "$ERLANG_NODE_ARG" != "" ] ; then
      ERLANG_NODE=$ERLANG_NODE_ARG
-     NODE=${ERLANG_NODE%@*}
  fi
--if [ "{{release}}" != "true" ] ; then
--    if [ "$EJABBERDDIR" = "" ] ; then
--        EJABBERDDIR={{libdir}}/ejabberd
--    fi
--    if [ "$EJABBERD_PRIV_PATH" = "" ] ; then
--        EJABBERD_PRIV_PATH=$EJABBERDDIR/priv
--    fi
--    if [ "$EJABBERD_BIN_PATH" = "" ] ; then
--        EJABBERD_BIN_PATH=$EJABBERD_PRIV_PATH/bin
--    fi
+-if [ "{{release}}" != "true" -a "$EJABBERD_BIN_PATH" = "" ] ; then
+-    EJABBERD_BIN_PATH={{libdir}}/ejabberd/priv/bin
 -fi
  EJABBERD_LOG_PATH=$LOGS_DIR/ejabberd.log
  DATETIME=`date "+%Y%m%d-%H%M%S"`
