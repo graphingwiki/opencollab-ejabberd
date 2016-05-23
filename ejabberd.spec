@@ -2,7 +2,7 @@
 
 Name:           ejabberd
 Version:        16.04
-Release:        1%{?dist}.collab
+Release:        2%{?dist}.collab
 Summary:        A distributed, fault-tolerant Jabber/XMPP server
 
 Group:          Applications/Internet
@@ -23,11 +23,11 @@ BuildRequires:  expat-devel
 BuildRequires:  openssl-devel
 BuildRequires:  pam-devel
 BuildRequires:  libyaml-devel
-BuildRequires:  erlang-compiler
-BuildRequires:  erlang-edoc
-BuildRequires:  erlang-erl_interface
-BuildRequires:  erlang-eunit
-BuildRequires:  erlang-parsetools
+BuildRequires:  erlang-compiler >= 17.1
+BuildRequires:  erlang-edoc >= 17.1
+BuildRequires:  erlang-erl_interface >= 17.1
+BuildRequires:  erlang-eunit >= 17.1
+BuildRequires:  erlang-parsetools >= 17.1
 BuildRequires:  git
 BuildRequires:  autoconf
 BuildRequires:  automake
@@ -44,7 +44,7 @@ Requires(postun): /sbin/service
 Provides:       user(%{name})
 Provides:       group(%{name})
 
-Requires:       erlang
+Requires:       erlang >= 17.1
 Requires:       util-linux
 Requires:       usermode
 %description
@@ -181,6 +181,9 @@ fi
 %attr(750,ejabberd,ejabberd) %dir /var/log/ejabberd
 
 %changelog
+* Mon May 23 2016 Ossi Salmi <osalmi@iki.fi> - 16.04-2
+- Add minimum required Erlang version
+
 * Wed May 04 2016 Ossi Salmi <osalmi@iki.fi> - 16.04-1
 - Ver. 16.04
 
