@@ -21,6 +21,6 @@ COPY build.sh ./
 RUN chown -R build:build .
 
 RUN spectool -C rpmbuild/SOURCES/ -g rpmbuild/SPECS/ejabberd.spec
-RUN sed -n 's:^BuildRequires\: *\([^ ]*\).*:\1:p' rpmbuild/SPECS/ejabberd.spec | xargs yum -y install
+RUN yum-builddep -y rpmbuild/SPECS/ejabberd.spec
 
 CMD sh build.sh
