@@ -1,7 +1,7 @@
 %global _hardened_build 1
 
 Name:           ejabberd
-Version:        16.08
+Version:        16.09
 Release:        1%{?dist}.collab
 Summary:        A distributed, fault-tolerant Jabber/XMPP server
 
@@ -181,6 +181,9 @@ fi
 %attr(750,ejabberd,ejabberd) %dir /var/log/ejabberd
 
 %changelog
+* Mon Nov 07 2016 Ossi Salmi <osalmi@iki.fi> - 16.09-1
+- Ver. 16.09
+
 * Tue Aug 23 2016 Ossi Salmi <osalmi@iki.fi> - 16.08-1
 - Ver. 16.08
 - Require Erlang version 19.0

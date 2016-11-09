@@ -1,21 +1,8 @@
-diff -up ejabberd-16.08/include/mod_muc_room.hrl.collab ejabberd-16.08/include/mod_muc_room.hrl
---- ejabberd-16.08/include/mod_muc_room.hrl.collab	2016-08-04 07:49:23.000000000 +0000
-+++ ejabberd-16.08/include/mod_muc_room.hrl	2016-08-23 15:45:45.954712376 +0000
-@@ -50,8 +50,8 @@
-     persistent                           = false :: boolean(),
-     moderated                            = true :: boolean(),
-     captcha_protected                    = false :: boolean(),
--    members_by_default                   = true :: boolean(),
--    members_only                         = false :: boolean(),
-+    members_by_default                   = false :: boolean(),
-+    members_only                         = true :: boolean(),
-     allow_user_invites                   = false :: boolean(),
-     allow_subscription                   = false :: boolean(),
-     password_protected                   = false :: boolean(),
-diff -up ejabberd-16.08/src/ejabberd_http.erl.collab ejabberd-16.08/src/ejabberd_http.erl
---- ejabberd-16.08/src/ejabberd_http.erl.collab	2016-08-04 07:49:23.000000000 +0000
-+++ ejabberd-16.08/src/ejabberd_http.erl	2016-08-23 15:45:45.954712376 +0000
-@@ -764,7 +764,13 @@ parse_auth(<<"Basic ", Auth64/binary>>) 
+diff --git a/src/ejabberd_http.erl b/src/ejabberd_http.erl
+index 31f80be..4e3baee 100644
+--- a/src/ejabberd_http.erl
++++ b/src/ejabberd_http.erl
+@@ -769,7 +769,13 @@ parse_auth(<<"Basic ", Auth64/binary>>) ->
          Pos ->
              {User, <<$:, Pass/binary>>} = erlang:split_binary(Auth, Pos-1),
              PassUtf8 = unicode:characters_to_binary(binary_to_list(Pass), utf8),
@@ -30,9 +17,10 @@ diff -up ejabberd-16.08/src/ejabberd_http.erl.collab ejabberd-16.08/src/ejabberd
      end;
  parse_auth(<<"Bearer ", SToken/binary>>) ->
      Token = str:strip(SToken),
-diff -up ejabberd-16.08/src/extauth.erl.collab ejabberd-16.08/src/extauth.erl
---- ejabberd-16.08/src/extauth.erl.collab	2016-08-04 07:49:23.000000000 +0000
-+++ ejabberd-16.08/src/extauth.erl	2016-08-23 15:45:45.954712376 +0000
+diff --git a/src/extauth.erl b/src/extauth.erl
+index 50330b4..0fe6d4c 100644
+--- a/src/extauth.erl
++++ b/src/extauth.erl
 @@ -31,7 +31,8 @@
  
  -export([start/2, stop/1, init/2, check_password/3,
@@ -48,12 +36,12 @@ diff -up ejabberd-16.08/src/extauth.erl.collab ejabberd-16.08/src/extauth.erl
  	      [<<"removeuser3">>, User, Server, Password]).
  
 +get_affiliation(User, Server, Room, RoomServer) ->
-+    call_port(?MYNAME, ["getaff", User, Server, Room, RoomServer]).
++    call_port(Server, ["getaff", User, Server, Room, RoomServer]).
 +
  call_port(Server, Msg) ->
      LServer = jid:nameprep(Server),
      ProcessName = get_process_name(LServer,
-@@ -157,7 +161,8 @@ flush_buffer_and_forward_messages(Pid) -
+@@ -157,7 +161,8 @@ flush_buffer_and_forward_messages(Pid) ->
  encode(L) -> str:join(L, <<":">>).
  
  decode([0, 0]) -> false;
@@ -63,10 +51,11 @@ diff -up ejabberd-16.08/src/extauth.erl.collab ejabberd-16.08/src/extauth.erl
  
  opt_type(extauth_instances) ->
      fun (V) when is_integer(V), V > 0 -> V end;
-diff -up ejabberd-16.08/src/mod_muc_room.erl.collab ejabberd-16.08/src/mod_muc_room.erl
---- ejabberd-16.08/src/mod_muc_room.erl.collab	2016-08-04 07:49:23.000000000 +0000
-+++ ejabberd-16.08/src/mod_muc_room.erl	2016-08-23 15:45:45.954712376 +0000
-@@ -1384,43 +1384,15 @@ set_affiliation(JID, Affiliation, StateD
+diff --git a/src/mod_muc_room.erl b/src/mod_muc_room.erl
+index ac2f5da..5190972 100644
+--- a/src/mod_muc_room.erl
++++ b/src/mod_muc_room.erl
+@@ -1447,43 +1447,15 @@ set_affiliation(JID, Affiliation, StateData, Reason) ->
      StateData#state{affiliations = Affiliations}.
  
  get_affiliation(JID, StateData) ->
@@ -119,7 +108,7 @@ diff -up ejabberd-16.08/src/mod_muc_room.erl.collab ejabberd-16.08/src/mod_muc_r
      end.
  
  get_service_affiliation(JID, StateData) ->
-@@ -2308,7 +2280,7 @@ send_new_presence1(NJID, Reason, IsIniti
+@@ -2363,7 +2335,7 @@ send_new_presence1(NJID, Reason, IsInitialPresence, StateData, OldStateData) ->
                          children = []}
                  }
          end,
@@ -128,7 +117,7 @@ diff -up ejabberd-16.08/src/mod_muc_room.erl.collab ejabberd-16.08/src/mod_muc_r
      SAffiliation = affiliation_to_list(Affiliation),
      UserList =
          case not (presence_broadcast_allowed(NJID, StateData) orelse
-@@ -2409,7 +2381,7 @@ send_existing_presences1(ToJID, StateDat
+@@ -2464,7 +2436,7 @@ send_existing_presences1(ToJID, StateData) ->
  		  {FromJID, _} -> ok;
  		  {_, false} -> ok;
  		  _ ->

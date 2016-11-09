@@ -1,6 +1,7 @@
-diff -up ejabberd-16.08/Makefile.in.makefile ejabberd-16.08/Makefile.in
---- ejabberd-16.08/Makefile.in.makefile	2016-08-04 07:49:23.000000000 +0000
-+++ ejabberd-16.08/Makefile.in	2016-08-23 15:45:45.944723610 +0000
+diff --git a/Makefile.in b/Makefile.in
+index eb14749..603ce4f 100644
+--- a/Makefile.in
++++ b/Makefile.in
 @@ -24,7 +24,7 @@ LIBDIR =  $(DESTDIR)@libdir@
  EJABBERDDIR = $(DESTDIR)@libdir@/ejabberd
  
@@ -10,7 +11,7 @@ diff -up ejabberd-16.08/Makefile.in.makefile ejabberd-16.08/Makefile.in
  datarootdir = @datarootdir@
  DOCDIR = $(DESTDIR)@docdir@
  
-@@ -153,13 +153,13 @@ $(sort $(call TO_DEST,$(MAIN_DIRS) $(DEP
+@@ -153,13 +153,13 @@ $(sort $(call TO_DEST,$(MAIN_DIRS) $(DEPS_DIRS))):
  	$(INSTALL) -d $@
  
  $(call TO_DEST,deps/p1_pam/priv/bin/epam): $(LIBDIR)/%: deps/p1_pam/priv/bin/epam $(call TO_DEST,deps/p1_pam/priv/bin/)
