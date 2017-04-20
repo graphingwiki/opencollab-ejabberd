@@ -1,5 +1,5 @@
 diff --git a/src/ejabberd_http.erl b/src/ejabberd_http.erl
-index 31f80be..4e3baee 100644
+index 31f80be7..4e3baee0 100644
 --- a/src/ejabberd_http.erl
 +++ b/src/ejabberd_http.erl
 @@ -769,7 +769,13 @@ parse_auth(<<"Basic ", Auth64/binary>>) ->
@@ -18,7 +18,7 @@ index 31f80be..4e3baee 100644
  parse_auth(<<"Bearer ", SToken/binary>>) ->
      Token = str:strip(SToken),
 diff --git a/src/extauth.erl b/src/extauth.erl
-index 50330b4..0fe6d4c 100644
+index 50330b47..0fe6d4c6 100644
 --- a/src/extauth.erl
 +++ b/src/extauth.erl
 @@ -31,7 +31,8 @@
@@ -52,7 +52,7 @@ index 50330b4..0fe6d4c 100644
  opt_type(extauth_instances) ->
      fun (V) when is_integer(V), V > 0 -> V end;
 diff --git a/src/mod_muc_room.erl b/src/mod_muc_room.erl
-index ac2f5da..5190972 100644
+index ac2f5daf..f7272f1b 100644
 --- a/src/mod_muc_room.erl
 +++ b/src/mod_muc_room.erl
 @@ -1447,43 +1447,15 @@ set_affiliation(JID, Affiliation, StateData, Reason) ->
@@ -108,6 +108,18 @@ index ac2f5da..5190972 100644
      end.
  
  get_service_affiliation(JID, StateData) ->
+@@ -2334,9 +2306,9 @@ is_ra_changed(LJID, _IsInitialPresence = false, NewStateData, OldStateData) ->
+ 	      _ -> jid:make(LJID)
+ 	  end,
+     NewRole = get_role(LJID, NewStateData),
+-    NewAff = get_affiliation(JID, NewStateData),
++    NewAff = member,
+     OldRole = get_role(LJID, OldStateData),
+-    OldAff = get_affiliation(JID, OldStateData),
++    OldAff = member,
+     if (NewRole == none) and (NewAff == OldAff) ->
+ 	    %% A user is leaving the room;
+ 	    false;
 @@ -2363,7 +2335,7 @@ send_new_presence1(NJID, Reason, IsInitialPresence, StateData, OldStateData) ->
                          children = []}
                  }

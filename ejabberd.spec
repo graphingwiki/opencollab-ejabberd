@@ -2,7 +2,7 @@
 
 Name:           ejabberd
 Version:        16.09
-Release:        1%{?dist}.collab
+Release:        2%{?dist}.collab
 Summary:        A distributed, fault-tolerant Jabber/XMPP server
 
 Group:          Applications/Internet
@@ -181,6 +181,9 @@ fi
 %attr(750,ejabberd,ejabberd) %dir /var/log/ejabberd
 
 %changelog
+* Thu Apr 20 2017 Ossi Salmi <osalmi@iki.fi> - 16.09-2
+- Update collab patch to reduce unnecessary getaff calls
+
 * Mon Nov 07 2016 Ossi Salmi <osalmi@iki.fi> - 16.09-1
 - Ver. 16.09
 
