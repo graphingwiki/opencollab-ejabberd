@@ -1,0 +1,123 @@
+--- ejabberd-16.01/src/ejabberd_http.erl.orig	2016-01-12 11:07:58.000000000 +0000
++++ ejabberd-16.01/src/ejabberd_http.erl	2018-01-09 13:29:38.285903259 +0000
+@@ -762,7 +762,13 @@ parse_auth(<<"Basic ", Auth64/binary>>)
+             undefined;
+         Pos ->
+             {User, <<$:, Pass/binary>>} = erlang:split_binary(Auth, Pos-1),
+-            {User, Pass}
++            case str:tokens(User, <<"@">>) of
++                [Nick, Domain] ->
++                    NewUser = <<Nick/binary, "%", Domain/binary>>;
++                _ ->
++                    NewUser = User
++            end,
++            {<<NewUser/binary, "@", (?MYNAME)/binary>>, Pass}
+     end;
+ parse_auth(<<"Bearer ", SToken/binary>>) ->
+     Token = str:strip(SToken),
+--- ejabberd-16.01/src/extauth.erl.orig	2016-01-12 11:07:58.000000000 +0000
++++ ejabberd-16.01/src/extauth.erl	2018-01-09 13:29:38.286903259 +0000
+@@ -31,7 +31,8 @@
+ 
+ -export([start/2, stop/1, init/2, check_password/3,
+ 	 set_password/3, try_register/3, remove_user/2,
+-	 remove_user/3, is_user_exists/2, opt_type/1]).
++	 remove_user/3, is_user_exists/2, opt_type/1,
++	 get_affiliation/4]).
+ 
+ -include("ejabberd.hrl").
+ -include("logger.hrl").
+@@ -94,6 +95,9 @@ remove_user(User, Server, Password) ->
+     call_port(Server,
+ 	      [<<"removeuser3">>, User, Server, Password]).
+ 
++get_affiliation(User, Server, Room, RoomServer) ->
++    call_port(Server, ["getaff", User, Server, Room, RoomServer]).
++
+ call_port(Server, Msg) ->
+     LServer = jid:nameprep(Server),
+     ProcessName = get_process_name(LServer,
+@@ -157,7 +161,8 @@ flush_buffer_and_forward_messages(Pid) -
+ encode(L) -> str:join(L, <<":">>).
+ 
+ decode([0, 0]) -> false;
+-decode([0, 1]) -> true.
++decode([0, 1]) -> true;
++decode(String) -> list_to_atom(String).
+ 
+ opt_type(extauth_instances) ->
+     fun (V) when is_integer(V), V > 0 -> V end;
+--- ejabberd-16.01/src/mod_muc_room.erl.orig	2016-01-12 11:07:58.000000000 +0000
++++ ejabberd-16.01/src/mod_muc_room.erl	2018-01-09 13:32:13.560958789 +0000
+@@ -1350,43 +1350,15 @@ set_affiliation(JID, Affiliation, StateD
+     StateData#state{affiliations = Affiliations}.
+ 
+ get_affiliation(JID, StateData) ->
+-    {_AccessRoute, _AccessCreate, AccessAdmin,
+-     _AccessPersistent} =
+-	StateData#state.access,
+-    Res = case acl:match_rule(StateData#state.server_host,
+-			      AccessAdmin, JID)
+-	      of
+-	    allow -> owner;
+-	    _ ->
+-		LJID = jid:tolower(JID),
+-		case (?DICT):find(LJID, StateData#state.affiliations) of
+-		  {ok, Affiliation} -> Affiliation;
+-		  _ ->
+-		      LJID1 = jid:remove_resource(LJID),
+-		      case (?DICT):find(LJID1, StateData#state.affiliations)
+-			  of
+-			{ok, Affiliation} -> Affiliation;
+-			_ ->
+-			    LJID2 = setelement(1, LJID, <<"">>),
+-			    case (?DICT):find(LJID2,
+-					      StateData#state.affiliations)
+-				of
+-			      {ok, Affiliation} -> Affiliation;
+-			      _ ->
+-				  LJID3 = jid:remove_resource(LJID2),
+-				  case (?DICT):find(LJID3,
+-						    StateData#state.affiliations)
+-				      of
+-				    {ok, Affiliation} -> Affiliation;
+-				    _ -> none
+-				  end
+-			    end
+-		      end
+-		end
+-	  end,
+-    case Res of
+-      {A, _Reason} -> A;
+-      _ -> Res
++    User = JID#jid.user,
++    Server = JID#jid.server,
++    Room = StateData#state.room,
++    RoomServer = StateData#state.host,
++    case extauth:get_affiliation(User, Server, Room, RoomServer) of
++        false ->
++            none;
++        Affiliation ->
++            Affiliation
+     end.
+ 
+ get_service_affiliation(JID, StateData) ->
+@@ -2149,7 +2121,7 @@ send_new_presence1(NJID, Reason, StateDa
+                         children = []}
+                 }
+         end,
+-    Affiliation = get_affiliation(LJID, StateData),
++    Affiliation = member,
+     SAffiliation = affiliation_to_list(Affiliation),
+     UserList =
+         case not (presence_broadcast_allowed(NJID, StateData) orelse
+@@ -2270,8 +2242,7 @@ send_existing_presences1(ToJID, StateDat
+ 			    {FromJID, _} -> ok;
+ 			    {_, false} -> ok;
+ 			    _ ->
+-				FromAffiliation = get_affiliation(LJID,
+-								  StateData),
++				FromAffiliation = member,
+ 				ItemAttrs = case Role == moderator orelse
+ 						   (StateData#state.config)#config.anonymous
+ 						     == false
