@@ -2,7 +2,7 @@ machine:
   services:
     - docker
   python:
-    version: 2.7.14
+    version: 2.7.10
 
 dependencies:
   pre:
