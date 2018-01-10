@@ -2,18 +2,18 @@ machine:
   services:
     - docker
   python:
-    version: 2.7.10
+    version: 2.7.14
 
 dependencies:
   pre:
     - pip install https://github.com/abusesa/github-release/archive/master.tar.gz
   override:
-    - docker build --pull --rm -t build-image .
+    - docker build --pull --rm -t build-image-centos7 centos7
 
 test:
   override:
-    - docker run -ti --name build-container build-image
-    - docker cp build-container:/output/. ${CIRCLE_ARTIFACTS}
+    - docker run -ti --name build-container-centos7 build-image-centos7
+    - docker cp build-container-centos7:/home/build/output/. ${CIRCLE_ARTIFACTS}
 
 deployment:
   release:

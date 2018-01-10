@@ -1,26 +1,46 @@
-diff --git a/src/ejabberd_http.erl b/src/ejabberd_http.erl
-index 31f80be7..4e3baee0 100644
---- a/src/ejabberd_http.erl
-+++ b/src/ejabberd_http.erl
-@@ -769,7 +769,13 @@ parse_auth(<<"Basic ", Auth64/binary>>) ->
+diff -up ejabberd-15.07/ejabberdctl.template.collab ejabberd-15.07/ejabberdctl.template
+--- ejabberd-15.07/ejabberdctl.template.collab	2018-01-08 14:58:20.170902942 +0000
++++ ejabberd-15.07/ejabberdctl.template	2018-01-08 15:21:48.202781707 +0000
+@@ -7,14 +7,16 @@ ERL_MAX_PORTS=32000
+ ERL_PROCESSES=250000
+ ERL_MAX_ETS_TABLES=1400
+ FIREWALL_WINDOW=""
+-ERLANG_NODE=ejabberd@localhost
++ERLANG_NODE=ejabberd@`hostname -s`
+ 
+ # define default environment variables
+ SCRIPT_DIR=`cd ${0%/*} && pwd`
+ ERL={{erl}}
+ IEX={{bindir}}/iex
+ EPMD={{bindir}}/epmd
+-INSTALLUSER={{installuser}}
++INSTALLUSER=ejabberd
++
++umask 027
+ 
+ # check the proper system user is used if defined
+ if [ "$INSTALLUSER" != "" ] ; then
+diff -up ejabberd-15.07/src/ejabberd_http.erl.collab ejabberd-15.07/src/ejabberd_http.erl
+--- ejabberd-15.07/src/ejabberd_http.erl.collab	2018-01-08 14:58:20.276902538 +0000
++++ ejabberd-15.07/src/ejabberd_http.erl	2018-01-08 15:03:00.403925307 +0000
+@@ -756,7 +756,13 @@ parse_auth(<<"Basic ", Auth64/binary>>)
+             undefined;
          Pos ->
              {User, <<$:, Pass/binary>>} = erlang:split_binary(Auth, Pos-1),
-             PassUtf8 = unicode:characters_to_binary(binary_to_list(Pass), utf8),
--            {User, PassUtf8}
+-            {User, Pass}
 +            case str:tokens(User, <<"@">>) of
 +                [Nick, Domain] ->
 +                    NewUser = <<Nick/binary, "%", Domain/binary>>;
 +                _ ->
 +                    NewUser = User
 +            end,
-+            {<<NewUser/binary, "@", (?MYNAME)/binary>>, PassUtf8}
++            {<<NewUser/binary, "@", (?MYNAME)/binary>>, Pass}
      end;
- parse_auth(<<"Bearer ", SToken/binary>>) ->
-     Token = str:strip(SToken),
-diff --git a/src/extauth.erl b/src/extauth.erl
-index 50330b47..0fe6d4c6 100644
---- a/src/extauth.erl
-+++ b/src/extauth.erl
+ parse_auth(<<_/binary>>) -> undefined.
+ 
+diff -up ejabberd-15.07/src/extauth.erl.collab ejabberd-15.07/src/extauth.erl
+--- ejabberd-15.07/src/extauth.erl.collab	2015-07-27 09:45:04.000000000 +0000
++++ ejabberd-15.07/src/extauth.erl	2018-01-08 14:59:33.807622039 +0000
 @@ -31,7 +31,8 @@
  
  -export([start/2, stop/1, init/2, check_password/3,
@@ -39,9 +59,9 @@ index 50330b47..0fe6d4c6 100644
 +    call_port(Server, ["getaff", User, Server, Room, RoomServer]).
 +
  call_port(Server, Msg) ->
-     LServer = jid:nameprep(Server),
+     LServer = jlib:nameprep(Server),
      ProcessName = get_process_name(LServer,
-@@ -157,7 +161,8 @@ flush_buffer_and_forward_messages(Pid) ->
+@@ -158,7 +162,8 @@ flush_buffer_and_forward_messages(Pid) -
  encode(L) -> str:join(L, <<":">>).
  
  decode([0, 0]) -> false;
@@ -51,11 +71,10 @@ index 50330b47..0fe6d4c6 100644
  
  opt_type(extauth_instances) ->
      fun (V) when is_integer(V), V > 0 -> V end;
-diff --git a/src/mod_muc_room.erl b/src/mod_muc_room.erl
-index ac2f5daf..f7272f1b 100644
---- a/src/mod_muc_room.erl
-+++ b/src/mod_muc_room.erl
-@@ -1447,43 +1447,15 @@ set_affiliation(JID, Affiliation, StateData, Reason) ->
+diff -up ejabberd-15.07/src/mod_muc_room.erl.collab ejabberd-15.07/src/mod_muc_room.erl
+--- ejabberd-15.07/src/mod_muc_room.erl.collab	2018-01-08 14:58:20.279902526 +0000
++++ ejabberd-15.07/src/mod_muc_room.erl	2018-01-08 15:09:05.867174201 +0000
+@@ -1360,43 +1360,15 @@ set_affiliation(JID, Affiliation, StateD
      StateData#state{affiliations = Affiliations}.
  
  get_affiliation(JID, StateData) ->
@@ -67,11 +86,11 @@ index ac2f5daf..f7272f1b 100644
 -	      of
 -	    allow -> owner;
 -	    _ ->
--		LJID = jid:tolower(JID),
+-		LJID = jlib:jid_tolower(JID),
 -		case (?DICT):find(LJID, StateData#state.affiliations) of
 -		  {ok, Affiliation} -> Affiliation;
 -		  _ ->
--		      LJID1 = jid:remove_resource(LJID),
+-		      LJID1 = jlib:jid_remove_resource(LJID),
 -		      case (?DICT):find(LJID1, StateData#state.affiliations)
 -			  of
 -			{ok, Affiliation} -> Affiliation;
@@ -82,7 +101,7 @@ index ac2f5daf..f7272f1b 100644
 -				of
 -			      {ok, Affiliation} -> Affiliation;
 -			      _ ->
--				  LJID3 = jid:remove_resource(LJID2),
+-				  LJID3 = jlib:jid_remove_resource(LJID2),
 -				  case (?DICT):find(LJID3,
 -						    StateData#state.affiliations)
 -				      of
@@ -108,33 +127,22 @@ index ac2f5daf..f7272f1b 100644
      end.
  
  get_service_affiliation(JID, StateData) ->
-@@ -2334,9 +2306,9 @@ is_ra_changed(LJID, _IsInitialPresence = false, NewStateData, OldStateData) ->
- 	      _ -> jid:make(LJID)
- 	  end,
-     NewRole = get_role(LJID, NewStateData),
--    NewAff = get_affiliation(JID, NewStateData),
-+    NewAff = member,
-     OldRole = get_role(LJID, OldStateData),
--    OldAff = get_affiliation(JID, OldStateData),
-+    OldAff = member,
-     if (NewRole == none) and (NewAff == OldAff) ->
- 	    %% A user is leaving the room;
- 	    false;
-@@ -2363,7 +2335,7 @@ send_new_presence1(NJID, Reason, IsInitialPresence, StateData, OldStateData) ->
-                         children = []}
-                 }
-         end,
+@@ -2147,7 +2119,7 @@ send_new_presence1(NJID, Reason, StateDa
+ 	   last_presence = Presence}} =
+ 	(?DICT):find(jlib:jid_tolower(LJID),
+ 		     StateData#state.users),
 -    Affiliation = get_affiliation(LJID, StateData),
 +    Affiliation = member,
      SAffiliation = affiliation_to_list(Affiliation),
-     UserList =
-         case not (presence_broadcast_allowed(NJID, StateData) orelse
-@@ -2464,7 +2436,7 @@ send_existing_presences1(ToJID, StateData) ->
- 		  {FromJID, _} -> ok;
- 		  {_, false} -> ok;
- 		  _ ->
--		      FromAffiliation = get_affiliation(LJID, StateData),
-+		      FromAffiliation = member,
- 		      ItemAttrs = case Role == moderator orelse
- 				      (StateData#state.config)#config.anonymous
- 				      == false
+     SRole = role_to_list(Role),
+     lists:foreach(fun ({_LJID, Info}) ->
+@@ -2242,8 +2214,7 @@ send_existing_presences1(ToJID, StateDat
+ 			  case RealToJID of
+ 			    FromJID -> ok;
+ 			    _ ->
+-				FromAffiliation = get_affiliation(LJID,
+-								  StateData),
++				FromAffiliation = member,
+ 				ItemAttrs = case Role == moderator orelse
+ 						   (StateData#state.config)#config.anonymous
+ 						     == false

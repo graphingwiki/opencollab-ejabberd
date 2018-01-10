@@ -1,0 +1,31 @@
+--- rpmbuild/SPECS/ejabberd.spec.orig	2017-06-30 18:46:11.000000000 +0000
++++ rpmbuild/SPECS/ejabberd.spec	2018-01-09 11:09:45.445214439 +0000
+@@ -16,8 +16,9 @@
+ 
+ 
+ Name:           ejabberd
++Epoch:          10
+ Version:        15.07
+-Release:        4%{?dist}
++Release:        4%{?dist}.collab
+ Summary:        A distributed, fault-tolerant Jabber/XMPP server
+ 
+ Group:          Applications/Internet
+@@ -71,6 +72,8 @@ Patch12: ejabberd-14.07-no_guide_html.pa
+ # Backported from https://github.com/processone/ejabberd/issues/1409
+ Patch13: ejabberd-15.07-Fix_migration_of_old_pubsub_db.patch
+ 
++Patch14: ejabberd-collab.patch
++
+ BuildRequires:  erlang
+ BuildRequires:  erlang-rebar
+ BuildRequires:  expat-devel
+@@ -153,6 +156,8 @@ tar xvf %{S:14}
+ # Fix old mnesia db migration
+ %patch13 -p1
+ 
++%patch14 -p1 -b .collab
++
+ 
+ %build
+ autoreconf -ivf
