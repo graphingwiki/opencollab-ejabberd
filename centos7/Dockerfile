@@ -8,7 +8,7 @@ RUN yum -y update && \
 RUN useradd -m -s /bin/sh build
 WORKDIR /home/build
 RUN yumdownloader --enablerepo=epel-testing-source --source ejabberd
-COPY build.sh *.patch ./
+COPY build.sh ejabberd-src-deps.tar *.patch ./
 RUN chown -R build:build .
 
 USER build

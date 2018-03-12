@@ -5,7 +5,7 @@ umask 022
 
 rpm -iv *.src.rpm
 patch -p0 < ejabberd-spec.patch
-cp ejabberd-collab.patch rpmbuild/SOURCES/
+cp ejabberd-src-deps.tar ejabberd-collab.patch rpmbuild/SOURCES/
 
 cd rpmbuild/SPECS
 rpmbuild -bs ejabberd.spec
