@@ -1,0 +1,11 @@
+--- ejabberd-16.01/ejabberd.service.template.orig	2019-07-04 16:54:07.000000000 +0000
++++ ejabberd-16.01/ejabberd.service.template	2019-07-04 18:27:38.851811000 +0000
+@@ -1,7 +1,6 @@
+ [Unit]
+ Description=A distributed, fault-tolerant Jabber/XMPP serve
+-After=epmd.service network.target
+-Requires=epmd.service
++After=network.target
+ 
+ [Service]
+ User=ejabberd
